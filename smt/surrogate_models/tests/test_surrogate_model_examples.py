@@ -200,6 +200,45 @@ class Test(unittest.TestCase):
         plt.show()
 
     @unittest.skipIf(NO_MATPLOTLIB, "Matplotlib not installed")
+    def test_gpx(self):
+        import numpy as np
+        import matplotlib.pyplot as plt
+
+        from smt.surrogate_models import GPX
+
+        xt = np.array([[0.0, 1.0, 1.5, 2.0, 3.0, 4.0]]).T
+        yt = np.array([[0.0, 1.0, 1.7, 1.5, 0.9, 1.0]]).T
+
+        sm = GPX()
+        sm.set_training_values(xt, yt)
+        sm.train()
+
+        num = 100
+        x = np.linspace(0.0, 4.0, num).reshape((-1, 1))
+        y = sm.predict_values(x)
+        # estimated variance
+        s2 = sm.predict_variances(x)
+        _, axs = plt.subplots(1)
+
+        # add a plot with variance
+        axs.plot(xt, yt, "o")
+        axs.plot(x, y)
+        axs.fill_between(
+            np.ravel(x),
+            np.ravel(y - 3 * np.sqrt(s2)),
+            np.ravel(y + 3 * np.sqrt(s2)),
+            color="lightgrey",
+        )
+        axs.set_xlabel("x")
+        axs.set_ylabel("y")
+        axs.legend(
+            ["Training data", "Prediction", "Confidence Interval 99%"],
+            loc="lower right",
+        )
+
+        plt.show()
+
+    @unittest.skipIf(NO_MATPLOTLIB, "Matplotlib not installed")
     def test_krg(self):
         import numpy as np
         import matplotlib.pyplot as plt
@@ -524,21 +563,21 @@ class Test(unittest.TestCase):
         genn.options["alpha"] = 0.1  # learning rate that controls optimizer step size
         genn.options["beta1"] = 0.9  # tuning parameter to control ADAM optimization
         genn.options["beta2"] = 0.99  # tuning parameter to control ADAM optimization
-        genn.options["lambd"] = (
-            0.1  # lambd = 0. = no regularization, lambd > 0 = regularization
-        )
-        genn.options["gamma"] = (
-            1.0  # gamma = 0. = no grad-enhancement, gamma > 0 = grad-enhancement
-        )
+        genn.options[
+            "lambd"
+        ] = 0.1  # lambd = 0. = no regularization, lambd > 0 = regularization
+        genn.options[
+            "gamma"
+        ] = 1.0  # gamma = 0. = no grad-enhancement, gamma > 0 = grad-enhancement
         genn.options["deep"] = 2  # number of hidden layers
         genn.options["wide"] = 6  # number of nodes per hidden layer
-        genn.options["mini_batch_size"] = (
-            64  # used to divide data into training batches (use for large data sets)
-        )
+        genn.options[
+            "mini_batch_size"
+        ] = 64  # used to divide data into training batches (use for large data sets)
         genn.options["num_epochs"] = 20  # number of passes through data
-        genn.options["num_iterations"] = (
-            100  # number of optimizer iterations per mini-batch
-        )
+        genn.options[
+            "num_iterations"
+        ] = 100  # number of optimizer iterations per mini-batch
         genn.options["is_print"] = True  # print output (or not)
         load_smt_data(
             genn, xt, yt, dyt_dxt

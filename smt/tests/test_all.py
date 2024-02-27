@@ -19,6 +19,7 @@ from smt.utils.sm_test_case import SMTestCase
 from smt.utils.silence import Silence
 from smt.utils.misc import compute_rms_error
 from smt.surrogate_models import (
+    GPX,
     LS,
     QP,
     KPLS,
@@ -45,21 +46,21 @@ def genn():
     neural_net.options["alpha"] = 0.1  # learning rate that controls optimizer step size
     neural_net.options["beta1"] = 0.9  # tuning parameter to control ADAM optimization
     neural_net.options["beta2"] = 0.99  # tuning parameter to control ADAM optimization
-    neural_net.options["lambd"] = (
-        0.1  # lambd = 0. = no regularization, lambd > 0 = regularization
-    )
-    neural_net.options["gamma"] = (
-        1.0  # gamma = 0. = no grad-enhancement, gamma > 0 = grad-enhancement
-    )
+    neural_net.options[
+        "lambd"
+    ] = 0.1  # lambd = 0. = no regularization, lambd > 0 = regularization
+    neural_net.options[
+        "gamma"
+    ] = 1.0  # gamma = 0. = no grad-enhancement, gamma > 0 = grad-enhancement
     neural_net.options["deep"] = 2  # number of hidden layers
     neural_net.options["wide"] = 12  # number of nodes per hidden layer
-    neural_net.options["mini_batch_size"] = (
-        10000  # used to divide data into training batches (use for large data sets)
-    )
+    neural_net.options[
+        "mini_batch_size"
+    ] = 10000  # used to divide data into training batches (use for large data sets)
     neural_net.options["num_epochs"] = 25  # number of passes through data
-    neural_net.options["num_iterations"] = (
-        100  # number of optimizer iterations per mini-batch
-    )
+    neural_net.options[
+        "num_iterations"
+    ] = 100  # number of optimizer iterations per mini-batch
     neural_net.options["is_print"] = True
     return neural_net
 
@@ -79,6 +80,7 @@ class Test(SMTestCase):
         sms = OrderedDict()
         sms["LS"] = LS()
         sms["QP"] = QP()
+        sms["GPX"] = GPX()
         sms["KRG"] = KRG(theta0=[1e-2] * ndim)
         sms["KPLS"] = KPLS(theta0=[1e-2] * ncomp, n_comp=ncomp)
         sms["KPLSK"] = KPLSK(theta0=[1] * ncomp, n_comp=ncomp)
@@ -94,6 +96,7 @@ class Test(SMTestCase):
         t_errors = {}
         t_errors["LS"] = 1.0
         t_errors["QP"] = 1.0
+        t_errors["GPX"] = 1.2
         t_errors["KRG"] = 1.2
         t_errors["MFK"] = 1e0
         t_errors["KPLS"] = 1.2
@@ -110,6 +113,7 @@ class Test(SMTestCase):
         e_errors = {}
         e_errors["LS"] = 1.5
         e_errors["QP"] = 1.5
+        e_errors["GPX"] = 2e-2
         e_errors["KRG"] = 2e-2
         e_errors["MFK"] = 2e-2
         e_errors["KPLS"] = 2e-2
@@ -196,6 +200,9 @@ class Test(SMTestCase):
     def test_exp_QP(self):
         self.run_test()
 
+    def test_exp_GPX(self):
+        self.run_test()
+
     def test_exp_KRG_Cobyla(self):
         self.run_test()
 
@@ -252,6 +259,9 @@ class Test(SMTestCase):
     def test_tanh_QP(self):
         self.run_test()
 
+    def test_tanh_GPX(self):
+        self.run_test()
+
     def test_tanh_KRG_Cobyla(self):
         self.run_test()
 
@@ -306,6 +316,9 @@ class Test(SMTestCase):
         self.run_test()
 
     def test_cos_QP(self):
+        self.run_test()
+
+    def test_cos_GPX(self):
         self.run_test()
 
     def test_cos_KRG_Cobyla(self):

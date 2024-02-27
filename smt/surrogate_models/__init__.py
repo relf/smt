@@ -7,6 +7,7 @@ from .kplsk import KPLSK
 from .genn import GENN
 from .mgp import MGP
 from .sgp import SGP
+from .gpx import GPX
 
 from .krg_based import MixIntKernelType
 from smt.utils.design_space import (
@@ -19,6 +20,7 @@ from smt.utils.design_space import (
 from smt.utils.kriging import MixHrcKernelType
 
 __all__ = [
+    "GPX",
     "LS",
     "QP",
     "KRG",
