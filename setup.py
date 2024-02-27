@@ -123,7 +123,7 @@ metadata = dict(
     },
     python_requires=">=3.8",
     zip_safe=False,
-    # ext_modules=ext,
+    ext_modules=ext,
     url="https://github.com/SMTorg/smt",  # use the URL to the github repo
     download_url="https://github.com/SMTorg/smt/releases",
 )
